@@ -559,7 +559,7 @@ grant select on public.suppression_entries to authenticated;
 drop policy if exists workspaces_select_member on public.workspaces;
 create policy workspaces_select_member
 on public.workspaces for select to authenticated
-using ((select private.is_workspace_member(id)));
+using (created_by = (select auth.uid()) or (select private.is_workspace_member(id)));
 
 drop policy if exists workspaces_insert_self on public.workspaces;
 create policy workspaces_insert_self
