@@ -414,11 +414,11 @@ function Dashboard({
         {notice ? <p className="notice" role="status">{notice}</p> : null}
 
         <section className="dashboard-grid">
-          <Panel className="queue-panel" title="Review Request Queue" count={state.contacts.length} action="View all">
+          <Panel className="queue-panel" title="Review Request Queue" count={state.contacts.length}>
             <RequestQueue contacts={state.contacts} />
           </Panel>
 
-          <Panel title="AI Asset Generation" count={state.assets.length} action="View all">
+          <Panel title="AI Asset Generation" count={state.assets.length}>
             <div className="panel-tabs">
               <button className="tab active">All</button>
               <button className="tab">Testimonials</button>
@@ -432,27 +432,27 @@ function Dashboard({
             </button>
           </Panel>
 
-          <Panel title="Review Collection Page" action="Open">
-            <CollectionPreview onNavigate={() => onNavigate(collectionUrl)} />
+          <Panel title="Review Collection Page">
+            <CollectionPreview brandName={state.workspace.brandName} collectionUrl={collectionUrl} onNavigate={() => onNavigate(collectionUrl)} />
           </Panel>
 
-          <Panel title="Review & Approvals" count={state.approvalSteps.length} action="View all">
+          <Panel title="Review & Approvals" count={state.approvalSteps.length}>
             <ApprovalPanel state={state} onApprove={handleApprove} publishing={publishing} />
           </Panel>
 
-          <Panel title="Collected Feedback" count={state.submissions.length} action="View all">
+          <Panel title="Collected Feedback" count={state.submissions.length}>
             <FeedbackList submissions={state.submissions} />
           </Panel>
 
-          <Panel title="Analytics Overview" action="Last 30 days">
+          <Panel title="Analytics Overview">
             <AnalyticsGrid metrics={state.metrics} />
           </Panel>
 
-          <Panel title="Website Widget Preview" action="Edit">
+          <Panel title="Website Widget Preview">
             <WidgetPreview state={state} />
           </Panel>
 
-          <Panel title="Channel Publishing Status" action="View all">
+          <Panel title="Channel Publishing Status">
             <PublishStatusList targets={state.publishTargets} />
           </Panel>
         </section>
@@ -464,14 +464,7 @@ function Dashboard({
 function Sidebar({ onNavigate }: { onNavigate: (path: string) => void }) {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const groups: Array<{ label: string; icon: LucideIcon; items?: string[] }> = [
-    { label: "Command Center", icon: Home },
-    { label: "Campaigns", icon: Send },
-    { label: "Collect", icon: Inbox, items: ["Review Requests", "Forms & Widgets", "Capture Settings"] },
-    { label: "Content Studio", icon: FileText, items: ["AI Generation", "Assets Library", "Brand Voice"] },
-    { label: "Publish", icon: Megaphone, items: ["Channels", "Automation", "Calendar"] },
-    { label: "Analytics", icon: BarChart3, items: ["Reports"] },
-    { label: "Integrations", icon: Link },
-    { label: "Settings", icon: Settings }
+    { label: "Command Center", icon: Home }
   ];
 
   return (
@@ -829,11 +822,18 @@ function AssetList({ assets }: { assets: AiAsset[] }) {
   );
 }
 
-function CollectionPreview({ onNavigate }: { onNavigate: () => void }) {
+function CollectionPreview({ brandName, collectionUrl, onNavigate }: { brandName: string; collectionUrl: string; onNavigate: () => void }) {
+  const [copied, setCopied] = useState(false);
+  const handleCopy = () => {
+    navigator.clipboard.writeText(window.location.origin + collectionUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   return (
     <div className="collection-preview">
       <div className="preview-hero">
-        <strong>ACME CO.</strong>
+        <strong>{brandName.toUpperCase()}</strong>
         <h3>Your feedback helps us keep getting better</h3>
         <p>Share your experience in just a few minutes.</p>
         <span>
@@ -848,15 +848,18 @@ function CollectionPreview({ onNavigate }: { onNavigate: () => void }) {
             <Star key={star} size={22} fill={star < 5 ? "currentColor" : "none"} />
           ))}
         </div>
-        <label>What impact has Acme Co. had on your business?</label>
-        <textarea readOnly value="Acme Co. helped us streamline our workflow and improve productivity across the entire team." />
-        <button className="secondary-button" onClick={onNavigate}>
-          <Video size={15} />
-          Open collection page
-        </button>
-        <button className="dark-button" onClick={onNavigate}>
-          Submit Feedback
-        </button>
+        <label>What impact has {brandName} had on your business?</label>
+        <textarea readOnly value={`${brandName} helped us streamline our workflow and improve productivity across the entire team.`} />
+        
+        <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+          <button className="secondary-button" onClick={handleCopy} style={{ flex: 1, justifyContent: 'center' }}>
+            <Link size={15} />
+            {copied ? "Copied!" : "Copy Link"}
+          </button>
+          <button className="dark-button" onClick={onNavigate} style={{ flex: 1 }}>
+            Open Page
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -1311,8 +1314,8 @@ function CollectPage({
             />
           </label>
           <label>
-            Company
-            <input value={customerCompany} onChange={(event) => setCustomerCompany(event.target.value)} required />
+            Company (Optional)
+            <input value={customerCompany} onChange={(event) => setCustomerCompany(event.target.value)} />
           </label>
         </div>
 
