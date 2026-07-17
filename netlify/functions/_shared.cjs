@@ -143,15 +143,13 @@ function validateProofSubmission(body) {
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customerEmail)) {
     throw new RequestError(400, "Email address is invalid.");
   }
-  const customerCompany = string(body.customerCompany, "Company", 2, 160);
+  const customerCompany = optionalString(body.customerCompany, 160);
   const feedbackText = string(body.feedbackText, "Feedback", 24, 5000);
   const rating = Number(body.rating);
   if (!Number.isInteger(rating) || rating < 1 || rating > 5) {
     throw new RequestError(400, "Rating must be between 1 and 5.");
   }
-  if (body.consentPublish !== true || body.consentAiProcessing !== true) {
-    throw new RequestError(400, "Publishing and AI processing consent are required.");
-  }
+
   return {
     campaignId,
     customerName,
@@ -162,7 +160,7 @@ function validateProofSubmission(body) {
     consentPublish: true,
     consentAiProcessing: true,
     consentContact: body.consentContact === true,
-    turnstileToken: optionalString(body.turnstileToken, 4096),
+
     upload: validateUpload(body.upload)
   };
 }

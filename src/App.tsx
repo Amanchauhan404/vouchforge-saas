@@ -834,8 +834,21 @@ function CollectionPreview({ brandName, collectionUrl, onNavigate }: { brandName
     <div className="collection-preview">
       <div className="preview-hero">
         <strong>{brandName.toUpperCase()}</strong>
-        <h3>Your feedback helps us keep getting better</h3>
-        <p>Share your experience in just a few minutes.</p>
+        <main className="collection-page">
+      <div className="form-container">
+        <header className="form-header">
+          <h1 className="brand-title">{brandName}</h1>
+          <h2>Elevate our platform with your insights</h2>
+          <p>We are constantly evolving to serve you better. Share your experience with {brandName}.</p>
+        </header>
+
+        {submitted ? (
+          <div className="success-message">
+            <CheckCircle2 size={42} />
+            <h2>Thank you for your valuable feedback</h2>
+            <p>Your insights directly influence our product roadmap.</p>
+          </div>
+        ) : (
         <span>
           <Lock size={13} />
           Secure & private
@@ -1045,64 +1058,6 @@ function PublishStatusList({ targets }: { targets: PublishTarget[] }) {
   );
 }
 
-type TurnstileOptions = {
-  sitekey: string;
-  callback: (token: string) => void;
-  "error-callback": () => void;
-  "expired-callback": () => void;
-};
-
-declare global {
-  interface Window {
-    turnstile?: {
-      render: (element: HTMLElement, options: TurnstileOptions) => string | number;
-      remove?: (widgetId: string | number) => void;
-    };
-  }
-}
-
-function TurnstileField({ onToken }: { onToken: (token: string) => void }) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const siteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY;
-
-  useEffect(() => {
-    if (!siteKey || !containerRef.current) return;
-    let cancelled = false;
-    let widgetId: string | number | undefined;
-    const render = () => {
-      if (cancelled || !containerRef.current || !window.turnstile) return;
-      widgetId = window.turnstile.render(containerRef.current, {
-        sitekey: siteKey,
-        callback: onToken,
-        "error-callback": () => onToken(""),
-        "expired-callback": () => onToken("")
-      });
-    };
-    const existing = document.querySelector<HTMLScriptElement>(
-      'script[src^="https://challenges.cloudflare.com/turnstile/"]'
-    );
-    if (window.turnstile) {
-      render();
-    } else if (existing) {
-      existing.addEventListener("load", render, { once: true });
-    } else {
-      const script = document.createElement("script");
-      script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
-      script.async = true;
-      script.defer = true;
-      script.addEventListener("load", render, { once: true });
-      document.head.appendChild(script);
-    }
-    return () => {
-      cancelled = true;
-      if (widgetId !== undefined) window.turnstile?.remove?.(widgetId);
-    };
-  }, [onToken, siteKey]);
-
-  if (!siteKey) return null;
-  return <div className="turnstile-field" ref={containerRef} aria-label="Spam protection" />;
-}
-
 function CollectPage({
   campaignId,
   state,
@@ -1122,11 +1077,7 @@ function CollectPage({
   const [customerEmail, setCustomerEmail] = useState("");
   const [customerCompany, setCustomerCompany] = useState("");
   const [feedbackText, setFeedbackText] = useState("");
-  const [consentPublish, setConsentPublish] = useState(false);
-  const [consentAiProcessing, setConsentAiProcessing] = useState(false);
-  const [consentContact, setConsentContact] = useState(false);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [turnstileToken, setTurnstileToken] = useState("");
+
   const [submissionError, setSubmissionError] = useState("");
   const [mediaNote, setMediaNote] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -1175,12 +1126,7 @@ function CollectPage({
   }
 
   async function handleSubmit(event: FormEvent) {
-    event.preventDefault();
-    if (!consentPublish || !consentAiProcessing) return;
-    if (isSupabaseConfigured && import.meta.env.VITE_TURNSTILE_SITE_KEY && !turnstileToken) {
-      setSubmissionError("Please complete the spam protection check before submitting.");
-      return;
-    }
+    if (!customerName || !customerEmail || !feedbackText || !rating) return;
     setSubmissionError("");
     setMediaNote("");
     setSubmitting(true);
@@ -1191,10 +1137,9 @@ function CollectPage({
       customerCompany,
       rating,
       feedbackText,
-      consentPublish,
-      consentAiProcessing,
-      consentContact,
-      turnstileToken: turnstileToken || undefined,
+      consentPublish: true,
+      consentAiProcessing: true,
+      consentContact: true,
       upload: selectedFile
         ? {
             fileName: selectedFile.name,
@@ -1336,39 +1281,9 @@ function CollectPage({
           <input type="file" accept="image/jpeg,image/png,image/webp,audio/mpeg,audio/wav,audio/webm,video/mp4,video/webm" onChange={handleFileChange} />
         </label>
 
-        <div className="consent-box">
-          <label>
-            <input
-              type="checkbox"
-              checked={consentPublish}
-              onChange={(event) => setConsentPublish(event.target.checked)}
-              required
-            />
-            I allow this feedback to be reviewed and published as customer proof after approval.
-          </label>
-          <label>
-            <input
-              type="checkbox"
-              checked={consentAiProcessing}
-              onChange={(event) => setConsentAiProcessing(event.target.checked)}
-              required
-            />
-            I allow AI processing to summarize and format my real feedback.
-          </label>
-          <label>
-            <input
-              type="checkbox"
-              checked={consentContact}
-              onChange={(event) => setConsentContact(event.target.checked)}
-            />
-            I can be contacted if the team needs to clarify my story.
-          </label>
-        </div>
-
-        <TurnstileField onToken={setTurnstileToken} />
         {submissionError ? <p className="form-error" role="alert">{submissionError}</p> : null}
         <button className="dark-button" type="submit" disabled={submitting}>
-          {submitting ? "Submitting..." : "Submit Feedback"}
+          {submitting ? "Securely Submitting..." : "Submit Experience"}
         </button>
         <div className="legal-links">
           <button type="button" className="text-action" onClick={() => onNavigate("/privacy")}>

@@ -14,7 +14,6 @@ const {
   parseJson,
   supabaseRequest,
   validateProofSubmission,
-  verifyTurnstile,
   writeAuditLog
 } = require("./_shared.cjs");
 
@@ -25,7 +24,6 @@ exports.handler = async (event) => {
   try {
     enforcePublicRateLimit(event);
     const proof = validateProofSubmission(parseJson(event));
-    const turnstile = await verifyTurnstile(proof.turnstileToken, event);
 
     if (!isSupabaseConfigured()) {
       return json(event, 201, { ok: true, id: `demo-${crypto.randomUUID()}`, mode: "demo" });
@@ -81,7 +79,6 @@ exports.handler = async (event) => {
         collection_ip_hash: ipHash(event),
         raw_metadata: {
           user_agent: String(event.headers?.["user-agent"] || "").slice(0, 512),
-          turnstile_verified: turnstile.verified,
           submitted_via: "public_collection"
         }
       })
