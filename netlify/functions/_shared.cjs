@@ -160,6 +160,7 @@ function validateProofSubmission(body) {
     consentPublish: true,
     consentAiProcessing: true,
     consentContact: body.consentContact === true,
+    turnstileToken: optionalString(body.turnstileToken, 4096),
 
     upload: validateUpload(body.upload)
   };
