@@ -29,7 +29,7 @@ async function recordEvent(provider, raw, parsed) {
 }
 
 exports.handler = async (event) => {
-  const provider = String(event.queryStringParameters?.provider || "").toLowerCase();
+  const provider = (event.path.split("/").pop() || event.queryStringParameters?.provider || "").toLowerCase();
   if (provider !== "meta") return json(event, 404, { ok: false, error: "Webhook provider is not configured." });
 
   if (event.httpMethod === "GET") {

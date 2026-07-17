@@ -59,9 +59,9 @@ function clientScript(stories) {
 
 exports.handler = async (event) => {
   if (event.httpMethod !== "GET") return json(event, 405, { ok: false, error: "Method not allowed." }, { Allow: "GET" });
-  const workspaceId = event.queryStringParameters?.workspaceId || "";
-  if (!/^[a-z0-9_-]{3,80}$/i.test(workspaceId)) return scriptResponse(event, clientScript([]));
   try {
+    const workspaceId = event.path.split("/").pop().replace(".js", "") || event.queryStringParameters?.workspaceId || "";
+    if (!/^[a-z0-9_-]{3,80}$/i.test(workspaceId)) return scriptResponse(event, clientScript([]));
     if (!isSupabaseConfigured()) return scriptResponse(event, clientScript([]));
     const rows = await supabaseRequest(
       `/rest/v1/ai_assets?select=title,body&workspace_id=eq.${restFilter(workspaceId)}&asset_type=eq.testimonial&status=eq.published&is_public=is.true&order=published_at.desc&limit=8`

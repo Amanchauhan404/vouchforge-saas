@@ -9,7 +9,7 @@ exports.handler = async (event) => {
   if (event.httpMethod !== "GET") return json(event, 405, { ok: false, error: "Method not allowed." }, { Allow: "GET, OPTIONS" });
 
   try {
-    const campaignId = event.queryStringParameters?.campaignId || "";
+    const campaignId = event.path.split("/").pop().replace(".js", "") || event.queryStringParameters?.campaignId || "";
     if (!validSlug(campaignId)) return json(event, 404, { ok: false, error: "This collection link is unavailable." });
     if (!isSupabaseConfigured()) return json(event, 503, { ok: false, error: "Public collection is not configured yet." });
 

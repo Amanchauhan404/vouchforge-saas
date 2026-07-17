@@ -5,7 +5,7 @@ exports.handler = async (event) => {
   if (event.httpMethod !== "GET") return json(event, 405, { ok: false, error: "Method not allowed." }, { Allow: "GET, OPTIONS" });
 
   try {
-    const workspaceId = event.queryStringParameters?.workspaceId || "";
+    const workspaceId = event.path.split("/").pop().replace(".js", "") || event.queryStringParameters?.workspaceId || "";
     if (!isUuid(workspaceId)) return json(event, 404, { ok: false, error: "This testimonial page is unavailable." });
     if (!isSupabaseConfigured()) return json(event, 503, { ok: false, error: "Public testimonials are not configured yet." });
 
