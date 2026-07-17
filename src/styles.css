@@ -1,23 +1,24 @@
 :root {
-  color-scheme: dark;
+  color-scheme: light;
   font-family: 'Outfit', Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  background: #09090b;
-  color: #fafafa;
-  --ink: #fafafa;
-  --muted: #a1a1aa;
-  --line: rgba(255, 255, 255, 0.1);
-  --soft-line: rgba(255, 255, 255, 0.05);
-  --panel: rgba(24, 24, 27, 0.6);
-  --panel-soft: rgba(39, 39, 42, 0.6);
-  --nav: #09090b;
-  --nav-2: #18181b;
-  --blue: #3b82f6;
-  --cyan: #06b6d4;
-  --green: #10b981;
-  --amber: #f59e0b;
-  --red: #ef4444;
-  --shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-  --radius: 12px;
+  background: #e0e5ec;
+  color: #2d3748;
+  --ink: #2d3748;
+  --muted: #718096;
+  --line: rgba(255, 255, 255, 0.4);
+  --soft-line: rgba(0, 0, 0, 0.05);
+  --panel: #e0e5ec;
+  --panel-soft: #e0e5ec;
+  --nav: #e0e5ec;
+  --nav-2: #e0e5ec;
+  --blue: #3182ce;
+  --cyan: #00b5d8;
+  --green: #38a169;
+  --amber: #d69e2e;
+  --red: #e53e3e;
+  --shadow: 9px 9px 16px rgb(163,177,198,0.6), -9px -9px 16px rgba(255,255,255, 0.5);
+  --shadow-inset: inset 6px 6px 10px 0 rgba(163,177,198, 0.5), inset -6px -6px 10px 0 rgba(255,255,255, 0.5);
+  --radius: 16px;
 }
 
 * {
@@ -28,7 +29,7 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  background: radial-gradient(circle at top left, #18181b, #09090b);
+  background: #e0e5ec;
 }
 
 button,
@@ -50,8 +51,8 @@ button:disabled {
 button:focus-visible,
 input:focus-visible,
 textarea:focus-visible {
-  outline: 3px solid rgba(13, 110, 234, 0.32);
-  outline-offset: 2px;
+  outline: none;
+  box-shadow: var(--shadow-inset), 0 0 0 2px var(--blue);
 }
 
 .app-frame {
@@ -67,10 +68,9 @@ textarea:focus-visible {
   flex-direction: column;
   height: 100vh;
   padding: 18px 14px;
-  color: #a1a1aa;
-  background: rgba(9, 9, 11, 0.8);
-  backdrop-filter: blur(20px);
-  border-right: 1px solid var(--line);
+  color: var(--ink);
+  background: var(--nav);
+  box-shadow: 9px 0px 16px rgba(163, 177, 198, 0.3);
 }
 
 .brand {
@@ -79,11 +79,12 @@ textarea:focus-visible {
   gap: 10px;
   width: 100%;
   min-height: 42px;
-  color: #ffffff;
+  color: var(--ink);
   background: transparent;
   text-align: left;
   font-size: 18px;
   font-weight: 760;
+  text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.5);
 }
 
 .mobile-nav-toggle {
@@ -131,7 +132,7 @@ textarea:focus-visible {
   min-height: 42px;
   padding: 0 12px;
   border-radius: 7px;
-  color: #a1a1aa;
+  color: var(--muted);
   background: transparent;
   font-size: 14px;
   text-align: left;
@@ -139,8 +140,9 @@ textarea:focus-visible {
 }
 
 .nav-row:hover {
-  background: rgba(255, 255, 255, 0.05);
-  color: #fafafa;
+  background: #e0e5ec;
+  color: var(--ink);
+  box-shadow: var(--shadow);
 }
 
 .nav-row svg:last-child {
@@ -148,9 +150,9 @@ textarea:focus-visible {
 }
 
 .nav-row.active {
-  color: #ffffff;
-  background: rgba(255, 255, 255, 0.1);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  color: var(--blue);
+  background: #e0e5ec;
+  box-shadow: var(--shadow-inset);
 }
 
 .nav-children {
@@ -224,9 +226,8 @@ textarea:focus-visible {
   gap: 14px;
   align-items: center;
   min-height: 72px;
-  background: rgba(9, 9, 11, 0.7);
-  border-bottom: 1px solid var(--soft-line);
-  backdrop-filter: blur(24px);
+  background: var(--panel);
+  box-shadow: 0px 9px 16px rgba(163, 177, 198, 0.2);
 }
 
 .workspace-switcher,
@@ -236,18 +237,16 @@ textarea:focus-visible {
 .public-card,
 .testimonial-card,
 .legal-page article {
-  border: 1px solid var(--line);
+  border: none;
   border-radius: var(--radius);
   background: var(--panel);
   box-shadow: var(--shadow);
-  backdrop-filter: blur(16px);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .panel:hover {
   transform: translateY(-2px);
-  box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.6);
-  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 12px 12px 20px rgb(163,177,198,0.7), -12px -12px 20px rgba(255,255,255, 0.6);
 }
 
 .workspace-switcher {
@@ -296,25 +295,33 @@ textarea:focus-visible {
   gap: 8px;
   min-height: 40px;
   padding: 0 14px;
-  border-radius: 7px;
+  border-radius: var(--radius);
   font-size: 14px;
   font-weight: 720;
+  box-shadow: var(--shadow);
+  background: var(--panel);
+  color: var(--ink);
+  transition: all 0.2s ease;
+}
+
+.primary-button:active,
+.secondary-button:active,
+.dark-button:active,
+.gold-button:active,
+.icon-button:active {
+  box-shadow: var(--shadow-inset);
 }
 
 .primary-button {
-  color: #ffffff;
-  background: #0b6eea;
+  color: var(--blue);
 }
 
 .secondary-button {
-  color: #17314f;
-  border: 1px solid var(--line);
-  background: #ffffff;
+  color: var(--ink);
 }
 
 .dark-button {
-  color: #ffffff;
-  background: #063544;
+  color: var(--ink);
 }
 
 .gold-button {
@@ -727,10 +734,9 @@ p {
   position: relative;
   min-height: 154px;
   padding: 22px;
-  color: #ffffff;
-  background:
-    linear-gradient(135deg, rgba(0, 57, 71, 0.95), rgba(4, 23, 39, 0.98)),
-    #063544;
+  color: var(--ink);
+  background: var(--panel);
+  border-bottom: 2px solid var(--soft-line);
 }
 
 .preview-hero h3 {
@@ -741,7 +747,7 @@ p {
 }
 
 .preview-hero p {
-  color: #c6d8e2;
+  color: var(--muted);
   font-size: 12px;
 }
 
@@ -790,9 +796,12 @@ p {
 
 textarea,
 input {
-  border: 1px solid var(--line);
-  border-radius: 7px;
-  background: #ffffff;
+  border: none;
+  border-radius: 12px;
+  background: var(--panel);
+  box-shadow: var(--shadow-inset);
+  color: var(--ink);
+  transition: all 0.2s ease;
 }
 
 textarea {
@@ -804,7 +813,6 @@ textarea {
 
 .preview-form textarea {
   min-height: 78px;
-  color: #25344a;
   font-size: 12px;
 }
 
