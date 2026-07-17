@@ -1,0 +1,72 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+  functions = "netlify/functions"
+
+[build.environment]
+  NODE_VERSION = "24"
+
+[[redirects]]
+  from = "/api/submit-proof"
+  to = "/.netlify/functions/submit-proof"
+  status = 200
+
+[[redirects]]
+  from = "/api/ai-generate"
+  to = "/.netlify/functions/ai-generate"
+  status = 200
+
+[[redirects]]
+  from = "/api/publish-job"
+  to = "/.netlify/functions/publish-job"
+  status = 200
+
+[[redirects]]
+  from = "/api/approve-asset"
+  to = "/.netlify/functions/approve-asset"
+  status = 200
+
+[[redirects]]
+from = "/api/confirm-upload"
+to = "/.netlify/functions/confirm-upload"
+status = 200
+
+[[redirects]]
+from = "/api/public-campaign/:campaignId"
+to = "/.netlify/functions/public-campaign?campaignId=:campaignId"
+status = 200
+
+[[redirects]]
+from = "/api/public-testimonials/:workspaceId"
+to = "/.netlify/functions/public-testimonials?workspaceId=:workspaceId"
+status = 200
+
+[[redirects]]
+from = "/api/webhooks/:provider"
+to = "/.netlify/functions/webhooks?provider=:provider"
+status = 200
+
+[[redirects]]
+  from = "/widget/:workspaceId.js"
+  to = "/.netlify/functions/widget?workspaceId=:workspaceId"
+  status = 200
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(self), microphone=(self), geolocation=()"
+
+[[headers]]
+  for = "/widget/*.js"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Cache-Control = "public, max-age=300"
+    Content-Type = "application/javascript; charset=utf-8"

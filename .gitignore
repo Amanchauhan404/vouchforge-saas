@@ -1,0 +1,13 @@
+node_modules/
+dist/
+.netlify/
+playwright-report/
+test-results/
+output/
+.secret-scan.json
+secret-scan.json
+*.tsbuildinfo
+.env
+.env.local
+.env.*.local
+!*.example
